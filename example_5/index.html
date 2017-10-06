@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <title>WebAssembly examples</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<style>
+
+.container {
+  
+  padding: 50px;
+  background-color: #BCC6CC;
+  width: 500px; 
+  display: inline-block;
+  overflow-x:hidden;
+  word-wrap: break-word;
+
+}
+
+.container div {
+  flex: 1;
+
+}
+
+</style>
+
+
+</head>
+
+<body>
+  
+   
+  
+  <div class="container" align="center">
+  <div id="wsm" > Click [Control] + [Shift] + [J] <br /> <br /></div>
+  <div></div>
+  </div>
+
+ 
+
+</body>
+
+<script>
+
+
+
+// Check for wasm support.
+if (!('WebAssembly' in window)) {
+      alert('you need a browser with wasm support enabled :(');
+}
+
+
+function utf8ToString(h, p) { // p -- offset ,h -- buffer
+  let s = "";
+  for (i = p; h[i]; i++) {
+    s += String.fromCharCode(h[i]);
+  }
+  return s;
+}
+
+
+
+Module = {};    // create the Module object to hold the wasm code
+loadWASM = () => {
+  
+  return new Promise((resolve) => {
+    
+    fetch('https://rawgit.com/nn1k1kvn/WebAssembly_Examples/master/example_2/test.wasm')    // load the .wasm file
+      .then(response => response.arrayBuffer())
+      .then((buffer) => {    //return ArrayBuffer
+        Module.wasmBinary = buffer;   // assign buffer to Module
+        
+         const script = document.createElement('script');
+         script.src = 'https://rawgit.com/nn1k1kvn/WebAssembly_Examples/master/example_2/test.js';   // set script source
+        
+         script.onload = () => {    // once script has loaded
+           console.log("Loaded Emscripten.");
+           resolve(Module);    // return Module
+         };
+         document.body.appendChild(script); // append script to DOM
+      });
+  });
+};
+
+
+loadWASM().then((m) => {    // 'm' now holds _main()
+  var wasmCode = new Uint8Array(Module.wasmBinary)
+
+   // console.log(m._main());
+  
+
+  });
+
+
+
+</script>
+</html>
